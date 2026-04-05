@@ -94,3 +94,27 @@ button:hover {
     text-align: center;
     margin-top: 20px;
 }
+.logo {
+    font-size: 60px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    font-family: 'Product Sans', Arial, sans-serif; /* Google wala font vibe */
+    letter-spacing: -2px;
+}
+
+/* Har lafz ko alag rang dein (Optional, lekin cool lagta hai) */
+.logo .d { color: #4285F4; } /* Blue */
+.logo .i { color: #EA4335; } /* Red */
+.logo .search-text { 
+    color: #5f6368; 
+    font-size: 45px; 
+    font-weight: normal; 
+    margin-left: 10px;
+    letter-spacing: 0;
+}
+
+/* Mobile par logo chota ho jaye */
+@media (max-width: 600px) {
+    .logo { font-size: 40px; }
+    .logo .search-text { font-size: 30px; }
+}
