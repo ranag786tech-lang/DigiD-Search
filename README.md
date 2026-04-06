@@ -12,9 +12,18 @@
 ## 📁 Project Structure
 
 ```text
-├── index.html   # Main Structure
-├── style.css    # Professional Styling
-├── script.js    # Search Logic & Filtering
-├── data.js      # Your Searchable Database
-├── README.md    # Project Documentation
-└── LICENSE      # MIT License
+DigiD-Search/
+│
+├── index.html              (یہاں manifest.json کا لنک شامل کرو)
+├── style.css               (کوئی تبدیلی نہیں)
+├── script.js               (REPLACE with advanced version)
+├── data.js                 (crawler سے update ہو گی)
+├── manifest.json           (🆕 NEW)
+├── service-worker.js       (🆕 NEW)
+├── icon-192.png            (🆕 NEW)
+├── icon-512.png            (🆕 NEW)
+├── crawler.py              (🆕 NEW - Python file)
+├── backend/                (🆕 NEW فولڈر)
+│   └── db_connect.js       (🆕 NEW)
+├── README.md
+└── LICENSE
