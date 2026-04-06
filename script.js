@@ -1,65 +1,80 @@
-// نیا advanced script.js
-let searchData = [];
-let searchIndex = {};
+// ============================================
+// یہ تمہارا موجودہ کوڈ ہے (جیسے کا ویسے رہنے دو)
+// ============================================
 
-// ڈیٹا لوڈ کرتے وقت inverted index بنا لو
-function buildSearchIndex(data) {
-    searchIndex = {};
-    data.forEach((item, idx) => {
-        const text = (item.title + " " + item.description + " " + item.keywords?.join(" ")).toLowerCase();
-        const words = text.split(/\W+/);
-        
-        words.forEach(word => {
-            if (!searchIndex[word]) searchIndex[word] = [];
-            if (!searchIndex[word].includes(idx)) searchIndex[word].push(idx);
-        });
+let selectedTab = 'All';
+
+function setTab(element, tabName) {
+    selectedTab = tabName;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    element.classList.add('active');
+    search();
+}
+
+function search() {
+    const query = document.getElementById("searchBox").value.toLowerCase();
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "";
+
+    if (query === "") {
+        resultsDiv.innerHTML = "<p style='color: #666;'>Search box khali hai. Kuch type karein...</p>";
+        return;
+    }
+
+    const filtered = data.filter(item => {
+        const matchesQuery = item.title.toLowerCase().includes(query) || 
+                             item.description.toLowerCase().includes(query) ||
+                             (item.keywords && item.keywords.some(k => k.toLowerCase().includes(query)));
+        const matchesTab = (selectedTab === 'All') || (item.category === selectedTab);
+        return matchesQuery && matchesTab;
+    });
+
+    if (filtered.length === 0) {
+        resultsDiv.innerHTML = `<div class="no-results"><p>🔍 "<strong>${query}</strong>" ke mutabiq kuch nahi mila.</p></div>`;
+        return;
+    }
+
+    filtered.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "result-item";
+        div.innerHTML = `
+            <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+            <span class="category-tag">${item.category || 'General'}</span>
+            <p>${item.description}</p>
+            <small>${item.link}</small>
+        `;
+        resultsDiv.appendChild(div);
     });
 }
 
-// Ranking function (TF-IDF based)
-function calculateRelevance(query, item, idx) {
-    const queryWords = query.toLowerCase().split(/\W+/);
-    let score = 0;
+// Enter key support
+document.getElementById("searchBox").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        search();
+    }
+});
+
+// ============================================
+// 🆕 یہ نئی چیز شامل کرو (اختیاری)
+// ============================================
+
+// یہ فنکشن بتائے گا کہ کتنے results ملے
+function showResultCount() {
+    const query = document.getElementById("searchBox").value.toLowerCase();
+    const count = data.filter(item => 
+        item.title.toLowerCase().includes(query) || 
+        item.description.toLowerCase().includes(query)
+    ).length;
     
-    queryWords.forEach(word => {
-        // Title میں match → سب سے زیادہ وزن
-        if (item.title.toLowerCase().includes(word)) score += 10;
-        
-        // Keywords میں match → زیادہ وزن
-        if (item.keywords?.some(k => k.toLowerCase().includes(word))) score += 5;
-        
-        // Description میں match → کم وزن
-        if (item.description.toLowerCase().includes(word)) score += 2;
-        
-        // Popularity factor (clicks count agar save kiya ho)
-        if (item.clicks) score += item.clicks / 100;
-    });
-    
-    return score;
+    const countDiv = document.getElementById("resultCount");
+    if (countDiv) {
+        countDiv.innerHTML = `About ${count} results`;
+    }
 }
 
-// Advanced search function
-function advancedSearch(query) {
-    if (!query.trim()) return [];
-    
-    const queryLower = query.toLowerCase();
-    const scored = [];
-    
-    searchData.forEach((item, idx) => {
-        const score = calculateRelevance(queryLower, item, idx);
-        if (score > 0) {
-            scored.push({ ...item, relevance: score });
-        }
-    });
-    
-    // Relevance کے حساب سے sort
-    scored.sort((a, b) => b.relevance - a.relevance);
-    return scored;
-}
-
-// اپنے existing search() function کو replace کر دو
+// جب بھی search ہو، count بھی دکھائے
+const originalSearch = search;
 window.search = function() {
-    const query = document.getElementById("searchBox").value;
-    const results = advancedSearch(query);
-    displayResults(results);
+    originalSearch();
+    showResultCount();
 };
