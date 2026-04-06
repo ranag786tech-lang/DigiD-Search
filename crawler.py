@@ -41,3 +41,5 @@ with open('data_updated.js', 'w', encoding='utf-8') as f:
     f.write("const data = ")
     json.dump(updated, f, indent=4, ensure_ascii=False)
     f.write(";\n\nexport default data;")
+pip install requests beautifulsoup4
+python crawler.py
