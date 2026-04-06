@@ -1,45 +1,49 @@
-# crawler.py
 import requests
 from bs4 import BeautifulSoup
-import json
+from pymongo import MongoClient
+import os
 
-# آپ کے موجودہ data.js سے URLs نکالنا
-def load_existing_data():
-    with open('data.js', 'r', encoding='utf-8') as f:
-        content = f.read()
-        # data.js میں const data = [...] ہے
-        start = content.find('[')
-        end = content.rfind(']') + 1
-        return json.loads(content[start:end])
+# MongoDB connection (GitHub secret se)
+MONGO_URI = os.getenv("MONGO_URI")
+client = MongoClient(MONGO_URI)
+db = client['DigiD_Search']
+collection = db['web_index']
 
-# نئے URLs کو crawl کرنا
-def crawl_new_data(existing_data):
-    new_data = []
-    
-    for item in existing_data:
-        try:
-            response = requests.get(item['link'], timeout=5)
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # صفحہ سے extra info نکالنا
-            meta_desc = soup.find('meta', attrs={'name': 'description'})
-            if meta_desc and len(item['description']) < 50:
-                item['description'] = meta_desc.get('content', item['description'])
-            
-            new_data.append(item)
-        except:
-            new_data.append(item)  # error پر بھی پرانا ڈیٹا رکھو
-    
-    return new_data
+def crawl_and_index(url, category="General"):
+    try:
+        response = requests.get(url, timeout=10)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        title = soup.title.string if soup.title else url
+        text_content = soup.get_text(separator=' ', strip=True)[:2000]
+        
+        collection.update_one(
+            {"url": url},
+            {"$set": {
+                "title": title, 
+                "content": text_content, 
+                "url": url,
+                "category": category
+            }},
+            upsert=True
+        )
+        print(f"✅ Indexed: {title[:50]} - {url}")
+    except Exception as e:
+        print(f"❌ Error crawling {url}: {e}")
 
-# Run karo
-existing = load_existing_data()
-updated = crawl_new_data(existing)
+# Websites to index (apni marzi ki sites daal sakte ho)
+urls_to_crawl = [
+    {"url": "https://en.wikipedia.org/wiki/Artificial_intelligence", "category": "All"},
+    {"url": "https://news.ycombinator.com", "category": "News"},
+    {"url": "https://books.google.com", "category": "Books"},
+    {"url": "https://finance.yahoo.com", "category": "Finance"},
+    {"url": "https://unsplash.com", "category": "Images"},
+    {"url": "https://youtube.com", "category": "Videos"},
+    {"url": "https://github.com", "category": "All"},
+    {"url": "https://openai.com", "category": "All"},
+]
 
-# نئی data.js فائل بناؤ
-with open('data_updated.js', 'w', encoding='utf-8') as f:
-    f.write("const data = ")
-    json.dump(updated, f, indent=4, ensure_ascii=False)
-    f.write(";\n\nexport default data;")
-pip install requests beautifulsoup4
-python crawler.py
+print("🚀 Starting crawler...")
+for site in urls_to_crawl:
+    crawl_and_index(site["url"], site["category"])
+print("✅ Crawling complete!")
