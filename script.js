@@ -10,13 +10,16 @@ function setTab(element, tabName) {
     element.classList.add('active');
     search();
 }
-
-function search() {
-    const query = document.getElementById("searchBox").value.toLowerCase();
-    const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "";
-
-    if (query === "") {
+async function search(query) {
+    const url = `https://api.duckduckgo.com/?q=${query}&format=json&pretty=1`;
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    // DuckDuckGo se related topics dikhao
+    const results = data.RelatedTopics;
+    displayResults(results);
+}
+ if (query === "") {
         resultsDiv.innerHTML = "<p style='color: #666;'>Search box khali hai. Kuch type karein...</p>";
         return;
     }
