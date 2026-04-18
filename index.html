@@ -2,52 +2,197 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Ye tag mobile par site ko sahi dikhane ke liye zaroori hai -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DigiD Search 🔍</title>
-    <link rel="stylesheet" href="style.css">
+    <title>DigiD Search — Digital Intelligence</title>
     
-    <!-- ✅ PWA ke liye manifest.json add kiya (mobile install hone ke liye) -->
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#f7f9fc">
+    <link rel="icon" type="image/png" href="icon.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+
+    <script src="data.js"></script>
+
+    <style>
+        :root {
+            /* Material 3 Color Palette */
+            --m3-background: #f7f9fc;
+            --m3-surface: #ffffff;
+            --m3-primary: #1a73e8;
+            --m3-on-surface: #1d1b20;
+            --m3-outline: #79747e;
+            --m3-container: #eef3fa;
+        }
+
+        body {
+            font-family: 'Google Sans', 'Roboto', sans-serif;
+            background-color: var(--m3-background);
+            color: var(--m3-on-surface);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Material 3 Top Header */
+        header {
+            width: 100%;
+            padding: 40px 0 20px 0;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .logo span { color: #4285F4; } /* Blue */
+        .logo .red { color: #EA4335; } /* Red */
+        .logo .yellow { color: #FBBC05; } /* Yellow */
+        .logo .green { color: #34A853; } /* Green */
+
+        /* M3 Search Anchor (The Pill) */
+        .search-wrapper {
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        #search-input {
+            width: 100%;
+            height: 56px;
+            background: var(--m3-surface);
+            border: 1px solid var(--m3-outline);
+            border-radius: 28px;
+            padding: 0 24px 0 56px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        #search-input:focus {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border-color: transparent;
+            background: #fff;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 16px;
+            color: var(--m3-outline);
+        }
+
+        /* Material 3 Tabs */
+        .tabs-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            width: 95%;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: var(--m3-container);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+            border: none;
+        }
+
+        .tab.active {
+            background-color: #d2e3fc;
+            color: #174ea6;
+        }
+
+        /* Results Grid */
+        #results-grid {
+            width: 90%;
+            max-width: 800px;
+            margin-top: 30px;
+            display: grid;
+            gap: 16px;
+        }
+
+        .result-card {
+            background: var(--m3-surface);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #e0e0e0;
+            transition: transform 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .result-card h3 {
+            margin: 0 0 8px 0;
+            color: #1a0dab;
+            font-size: 18px;
+        }
+
+        .result-card p {
+            margin: 0;
+            color: #4d5156;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .tech-tag {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--m3-primary);
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- 🎨 Naya Text-Based Logo -->
-<div class="logo">
-    <span style="color: #4285F4;">D</span><span style="color: #EA4335;">i</span><span style="color: #FBBC05;">g</span><span style="color: #34A853;">i</span><span style="color: #4285F4;">D</span>
-    <span class="search-text">Search</span>
-</div>
-        <!-- 🔍 Search Box Section -->
-    <div class="search-tabs">
-    <div class="tab active" onclick="setTab(this, 'All')">🔍 All</div>
-    <div class="tab" onclick="setTab(this, 'Images')">🖼️ Images</div>
-    <div class="tab" onclick="setTab(this, 'Videos')">🎥 Videos</div>
-    <div class="tab" onclick="setTab(this, 'News')">📰 News</div>
-    <div class="tab" onclick="setTab(this, 'Books')">📚 Books</div>
-    <div class="tab" onclick="setTab(this, 'Finance')">💹 Finance</div>
-    </div>
-    
-        <div class="search-section">
-            <input type="text" id="searchBox" placeholder="Search anything on DigiD...">
-            <br> <!-- Button ko niche lane ke liye -->
-            <button onclick="search()">DigiD Search</button>
+    <header>
+        <div class="logo">
+            <span>D</span><span class="red">i</span><span class="yellow">g</span><span class="red">i</span><span>D</span> Search
+        </div>
+        
+        <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Search your DG Universe..." autocomplete="off">
         </div>
 
-        <!-- 📋 Results Yahan Show Honge -->
-        <div id="results"></div>
-    </div>
+        <div class="tabs-container">
+            <button class="tab active">All</button>
+            <button class="tab">Projects</button>
+            <button class="tab">Docs</button>
+            <button class="tab">Nexus</button>
+            <button class="tab">History</button>
+        </div>
+    </header>
 
-    <!-- Scripts -->
-    <script src="data.js"></script>
+    <main id="results-grid">
+        </main>
+
     <script src="script.js"></script>
-    
-    <!-- ✅ Service Worker register karne ke liye (PWA ke liye) -->
     <script>
+        // Register PWA Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-            .then(() => console.log('✅ Service Worker registered!'))
-            .catch(err => console.log('❌ Service Worker failed:', err));
+            navigator.serviceWorker.register('service-worker.js');
         }
     </script>
 </body>
