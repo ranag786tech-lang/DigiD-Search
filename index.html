@@ -1,199 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ur">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DigiD Search — Digital Intelligence</title>
+    <title>DigiD Search — Updated</title>
     
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#f7f9fc">
-    <link rel="icon" type="image/png" href="icon.png">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
-
     <script src="data.js"></script>
 
     <style>
         :root {
-            /* Material 3 Color Palette */
-            --m3-background: #f7f9fc;
-            --m3-surface: #ffffff;
-            --m3-primary: #1a73e8;
-            --m3-on-surface: #1d1b20;
-            --m3-outline: #79747e;
-            --m3-container: #eef3fa;
+            --primary: #1a73e8;
+            --bg: #f8f9fa;
         }
 
         body {
-            font-family: 'Google Sans', 'Roboto', sans-serif;
-            background-color: var(--m3-background);
-            color: var(--m3-on-surface);
+            font-family: 'Google Sans', sans-serif;
+            background-color: var(--bg);
             margin: 0;
-            padding: 0;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: center; /* سینٹر کرنے کے لیے */
+            min-height: 100vh;
         }
 
-        /* Material 3 Top Header */
         header {
             width: 100%;
-            padding: 40px 0 20px 0;
-            text-align: center;
-        }
-
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 500;
-            margin-bottom: 20px;
-        }
-
-        .logo span { color: #4285F4; } /* Blue */
-        .logo .red { color: #EA4335; } /* Red */
-        .logo .yellow { color: #FBBC05; } /* Yellow */
-        .logo .green { color: #34A853; } /* Green */
-
-        /* M3 Search Anchor (The Pill) */
-        .search-wrapper {
-            width: 90%;
             max-width: 600px;
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .logo { font-size: 32px; font-weight: bold; margin-bottom: 30px; }
+        .logo span { color: #4285F4; }
+
+        /* سرچ بار کو سینٹر میں لانے کے لیے */
+        .search-box {
             position: relative;
+            width: 90%;
+            margin: 0 auto;
         }
 
         #search-input {
             width: 100%;
-            height: 56px;
-            background: var(--m3-surface);
-            border: 1px solid var(--m3-outline);
-            border-radius: 28px;
-            padding: 0 24px 0 56px;
+            padding: 15px 25px;
+            border-radius: 30px;
+            border: 1px solid #dfe1e5;
             font-size: 16px;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
             outline: none;
+            box-shadow: none;
+            transition: 0.3s;
         }
 
         #search-input:focus {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            border-color: transparent;
-            background: #fff;
+            box-shadow: 0 1px 6px rgba(32,33,36,0.28);
         }
 
-        .search-icon {
-            position: absolute;
-            left: 20px;
-            top: 16px;
-            color: var(--m3-outline);
-        }
-
-        /* Material 3 Tabs */
-        .tabs-container {
+        /* ٹیبز کا ڈیزائن */
+        .tabs {
             display: flex;
-            gap: 12px;
-            margin-top: 24px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            width: 95%;
             justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
 
-        .tab {
-            padding: 10px 20px;
-            background: var(--m3-container);
+        .tab-btn {
+            padding: 8px 18px;
             border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
+            border: 1px solid #dadce0;
+            background: white;
             cursor: pointer;
-            white-space: nowrap;
-            transition: 0.2s;
-            border: none;
-        }
-
-        .tab.active {
-            background-color: #d2e3fc;
-            color: #174ea6;
-        }
-
-        /* Results Grid */
-        #results-grid {
-            width: 90%;
-            max-width: 800px;
-            margin-top: 30px;
-            display: grid;
-            gap: 16px;
-        }
-
-        .result-card {
-            background: var(--m3-surface);
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid #e0e0e0;
-            transition: transform 0.2s;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .result-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .result-card h3 {
-            margin: 0 0 8px 0;
-            color: #1a0dab;
-            font-size: 18px;
-        }
-
-        .result-card p {
-            margin: 0;
-            color: #4d5156;
             font-size: 14px;
-            line-height: 1.5;
         }
 
-        .tech-tag {
-            display: inline-block;
-            margin-top: 10px;
-            font-size: 12px;
-            color: var(--m3-primary);
+        .tab-btn.active {
             background: #e8f0fe;
-            padding: 2px 8px;
-            border-radius: 4px;
+            color: #1967d2;
+            border-color: #1967d2;
+        }
+
+        #results {
+            width: 90%;
+            max-width: 600px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">
-            <span>D</span><span class="red">i</span><span class="yellow">g</span><span class="red">i</span><span>D</span> Search
-        </div>
+        <div class="logo"><span>DigiD</span> Search</div>
         
-        <div class="search-wrapper">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="search-input" placeholder="Search your DG Universe..." autocomplete="off">
-        </div>
+        <form id="search-form" onsubmit="return false;">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="یہاں سرچ کریں...">
+            </div>
+        </form>
 
-        <div class="tabs-container">
-            <button class="tab active">All</button>
-            <button class="tab">Projects</button>
-            <button class="tab">Docs</button>
-            <button class="tab">Nexus</button>
-            <button class="tab">History</button>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="filterData('all', this)">All</button>
+            <button class="tab-btn" onclick="filterData('project', this)">Projects</button>
+            <button class="tab-btn" onclick="filterData('nexus', this)">Nexus</button>
         </div>
     </header>
 
-    <main id="results-grid">
-        </main>
+    <main id="results"></main>
 
     <script src="script.js"></script>
-    <script>
-        // Register PWA Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js');
-        }
-    </script>
 </body>
 </html>
