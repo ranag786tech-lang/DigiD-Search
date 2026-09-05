@@ -1,0 +1,9 @@
+{
+  "name": "DigiD Browser",
+  "short_name": "DigiD",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a73e8",
+  "icons": [{ "src": "icon.png", "sizes": "512x512", "type": "image/png" }]
+}
