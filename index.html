@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiD Browser</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="toolbar">
+        <div class="logo">DigiD</div>
+        <div class="nav-btns">
+            <button onclick="goBack()">←</button>
+            <button onclick="goForward()">→</button>
+            <button onclick="reloadPage()">↻</button>
+        </div>
+        <div class="omnibox">
+            <input type="text" id="url-input" placeholder="Search or enter URL..." onkeypress="if(event.key==='Enter') go()">
+            <button onclick="go()">Go</button>
+        </div>
+    </div>
+    <div class="tabs">
+        <button class="tab active">Home</button>
+    </div>
+    <iframe id="webview" src="about:blank"></iframe>
+    <script src="browser.js"></script>
+</body>
+</html>
