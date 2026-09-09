@@ -6,7 +6,7 @@ const BLOCKED_HOSTS = ['google.com', 'youtube.com', 'facebook.com', 'instagram.c
 
 const OCTET = '(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)';
 const IPV4 = new RegExp(`^${OCTET}(\\.${OCTET}){3}(:\\d+)?([/?#].*)?$`);
-const DOMAIN = /^[^\s/?#]+\.[a-z]{2,}(?::\d+)?([/?#].*)?$/i;
+const DOMAIN = /^[^\s/?#]+\.[a-z]{2,}\.?(?::\d+)?([/?#].*)?$/i;
 
 const HOME_HTML = `
     <div style="font-family:sans-serif; text-align:center; padding:50px;">
