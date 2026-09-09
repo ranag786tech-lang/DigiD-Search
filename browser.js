@@ -1,34 +1,59 @@
 const webview = document.getElementById('webview');
 const urlInput = document.getElementById('url-input');
 
-function go(){
-    let url = urlInput.value.trim();
-    if(!url) return;
+// Ye sites iframe me embed hone nahi deti, in ko naye tab me kholo
+const BLOCKED_HOSTS = ['google.com', 'youtube.com', 'facebook.com', 'instagram.com'];
 
-    // Search vs URL
-    if(!url.startsWith('http') && !url.includes('.')){
+function looksLikeUrl(text){
+    if(/^https?:\/\//i.test(text)) return true;
+    if(/\s/.test(text)) return false;
+    return /^[^\s/?#]+\.[a-z]{2,}(?::\d+)?([/?#].*)?$/i.test(text);
+}
+
+function isBlockedHost(hostname){
+    return BLOCKED_HOSTS.some(h => hostname === h || hostname.endsWith('.' + h));
+}
+
+function go(){
+    const query = urlInput.value.trim();
+    if(!query) return;
+
+    let url;
+    if(looksLikeUrl(query)){
+        url = /^https?:\/\//i.test(query) ? query : 'https://' + query;
+    } else {
         // Google ki jagah DuckDuckGo - ye iframe me chalta hai
-        url = `https://duckduckgo.com/?q=${encodeURIComponent(url)}`;
-    } else if(!url.startsWith('http')){
-        url = 'https://' + url;
+        url = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
     }
 
-    // Google, YouTube, Facebook ye sab iframe block karte hain
-    // Is liye unko naye tab me kholo
-    const blocked = ['google.com', 'youtube.com', 'facebook.com', 'instagram.com'];
-    if(blocked.some(b => url.includes(b))){
+    let hostname;
+    try {
+        hostname = new URL(url).hostname.toLowerCase();
+    } catch {
+        url = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+        hostname = 'duckduckgo.com';
+    }
+
+    if(isBlockedHost(hostname)){
         window.open(url, '_blank');
-        urlInput.value = "Opened in new tab: " + url;
         return;
     }
 
-    webview.src = url;
+    navigate(url);
     urlInput.value = url;
+}
+
+function navigate(url){
+    webview.removeAttribute('srcdoc');
+    webview.src = url;
 }
 
 function goBack(){ webview.contentWindow.history.back(); }
 function goForward(){ webview.contentWindow.history.forward(); }
-function reloadPage(){ webview.src = webview.src; }
+function reloadPage(){
+    if(webview.hasAttribute('srcdoc')) return;
+    webview.src = webview.src;
+}
 
 // Shuru me apna home page
 window.onload = () => {
